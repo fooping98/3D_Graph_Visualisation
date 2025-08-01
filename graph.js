@@ -1,23 +1,25 @@
-// Example graph data
-const graphData = {
-  nodes: [
-    { id: 'A' },
-    { id: 'B' },
-    { id: 'C' },
-    { id: 'D' },
-    { id: 'E' },
-    { id: 'F' },
-  ],
-  links: [
-    { source: 'A', target: 'B' },
-    { source: 'A', target: 'C' },
-    { source: 'B', target: 'D' },
-    { source: 'C', target: 'E' },
-    { source: 'D', target: 'E' },
-    { source: 'E', target: 'F' },
-    { source: 'F', target: 'E' }
-  ]
+
+document.getElementById('add-row-btn').onclick = () => {
+  const tbody = document.querySelector('#edge-table tbody');
+  const newRow = document.createElement('tr');
+  newRow.innerHTML = `
+    <td><input type="text" /></td>
+    <td><input type="text" /></td>
+  `;
+  tbody.appendChild(newRow);
 };
+
+document.getElementById('delete-row-btn').onclick = () => {
+  const tbody = document.querySelector('#edge-table tbody');
+  const rows = tbody.querySelectorAll('tr');
+  if (rows.length > 1) {
+    tbody.removeChild(rows[rows.length - 1]);
+  } else {
+    alert('At least one row must remain.');
+  }
+};
+
+
 
 
 function createLabel(text) {
@@ -57,33 +59,75 @@ function createLabel(text) {
   return sprite;
 }
 
-
+// .nodeLabel(node => node.id)
+//   .nodeAutoColorBy('id')
 
 
 
 // Initialize the 3D graph
-const Graph = ForceGraph3D()
-  (document.getElementById('3d-graph'))
-  .graphData(graphData)
-  .nodeLabel(node => node.id)
-  .nodeAutoColorBy('id')
-   .nodeThreeObject(node => {
-    const group = new THREE.Group();
+// const Graph = ForceGraph3D()
+//   (document.getElementById('3d-graph'))
+//   .graphData(graphData)
+  
+//    .nodeThreeObject(node => {
+//     const group = new THREE.Group();
 
-    // Node sphere
-    const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(4),
-      new THREE.MeshBasicMaterial({ color: node.color || 'steelblue' })
-    );
-    group.add(sphere);
+//     // Node sphere
+//     const sphere = new THREE.Mesh(
+//       new THREE.SphereGeometry(4),
+//       new THREE.MeshBasicMaterial({ color: node.color || 'steelblue' })
+//     );
+//     group.add(sphere);
 
-    // Label
-    const label = createLabel(node.id);
-    label.position.y = 10;
-    group.add(label);
+//     // Label
+//     const label = createLabel(node.id);
+//     label.position.y = 10;
+//     group.add(label);
 
-    return group;
-  })
-   .linkDirectionalArrowLength(5)       // length of the arrowhead
-  .linkDirectionalArrowRelPos(1)      // position of arrow along the link (1 = at target)
+//     return group;
+//   });
+
+// Initialize graph instance globally
+const Graph = ForceGraph3D()(document.getElementById('3d-graph'))
+  .linkDirectionalArrowLength(5)
+  .linkDirectionalArrowRelPos(1)
   .linkCurvature(0.3);
+
+// Build graph from table rows
+document.getElementById('build-graph-btn').onclick = () => {
+  const rows = document.querySelectorAll('#edge-table tbody tr');
+  const links = [];
+  const nodeSet = new Set();
+
+  rows.forEach(row => {
+    const source = row.cells[0].querySelector('input').value.trim();
+    const target = row.cells[1].querySelector('input').value.trim();
+    if(source && target) {
+      links.push({ source, target });
+      nodeSet.add(source);
+      nodeSet.add(target);
+    }
+  });
+
+ const nodes = Array.from(nodeSet).map(id => ({ id, label: id }));
+
+ Graph.graphData({ nodes, links })
+    .nodeThreeObject(node => {
+      const group = new THREE.Group();
+
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(4),
+        new THREE.MeshBasicMaterial({ color: 'steelblue' })
+      );
+      group.add(sphere);
+
+      const label = createLabel(node.label);
+      label.position.y = 10;
+      group.add(label);
+
+      return group;
+    });
+};
+
+// Build graph initially
+document.getElementById('build-graph-btn').click();

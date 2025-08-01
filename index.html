@@ -4,7 +4,27 @@
   <meta charset="UTF-8">
   <title>3D Graph Visualization</title>
   <style>
-    body { margin: 0; }
+    body { margin: 0; font-family: Arial; }
+    #controls {
+      position: absolute;
+      top: 10px; left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      z-index: 10;
+      max-width: 350px;
+      overflow-y: auto;
+      max-height: 90vh;
+      box-sizing: border-box;
+    }
+     table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    th, td { border: 1px solid #ccc; padding: 6px; }
+    input { width: 90%; }
+    button { width: 100%; padding: 8px; margin-bottom: 10px; cursor: pointer; }
+    textarea, input {
+      width: 100%;
+      margin-bottom: 5px;
+    }
     #3d-graph { width: 100vw; height: 100vh; }
   </style>
   <!-- Load the 3d-force-graph library via CDN -->
@@ -12,10 +32,35 @@
   <script src="https://unpkg.com/3d-force-graph"></script>
 </head>
 <body>
+   <div id="controls">
+  <h3>Graph Edges (Source → Target)</h3>
+  <table id="edge-table">
+    <thead>
+      <tr><th>Source</th><th>Target</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" value="A" /></td>
+        <td><input type="text" value="B" /></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="A" /></td>
+        <td><input type="text" value="C" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <button id="add-row-btn">Add Row</button>
+  <button id="delete-row-btn">Delete last Row</button>
+  <button id="build-graph-btn">Build Graph</button>
+</div>
+
+
   <div id="3d-graph"></div>
 
   <!-- Link to external JavaScript -->
   <script src="graph.js"></script>
 </body>
+
+
 </html>
 
