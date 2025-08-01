@@ -1,4 +1,19 @@
 
+// collapse table 
+const toggleBtn = document.getElementById('toggle-btn');
+const controls=document.getElementById("controls");
+
+
+  let isCollapsed = false;
+
+  toggleBtn.addEventListener('click', () => {
+    isCollapsed = !isCollapsed;
+    controls.style.display = isCollapsed ? 'none' : 'block';
+    toggleBtn.textContent = isCollapsed ? 'Expand Table' : 'Collapse Table';
+  });
+
+
+
 document.getElementById('add-row-btn').onclick = () => {
   const tbody = document.querySelector('#edge-table tbody');
   const newRow = document.createElement('tr');
@@ -18,9 +33,6 @@ document.getElementById('delete-row-btn').onclick = () => {
     alert('At least one row must remain.');
   }
 };
-
-
-
 
 function createLabel(text) {
   const fontSize = 80;
@@ -59,34 +71,6 @@ function createLabel(text) {
   return sprite;
 }
 
-// .nodeLabel(node => node.id)
-//   .nodeAutoColorBy('id')
-
-
-
-// Initialize the 3D graph
-// const Graph = ForceGraph3D()
-//   (document.getElementById('3d-graph'))
-//   .graphData(graphData)
-  
-//    .nodeThreeObject(node => {
-//     const group = new THREE.Group();
-
-//     // Node sphere
-//     const sphere = new THREE.Mesh(
-//       new THREE.SphereGeometry(4),
-//       new THREE.MeshBasicMaterial({ color: node.color || 'steelblue' })
-//     );
-//     group.add(sphere);
-
-//     // Label
-//     const label = createLabel(node.id);
-//     label.position.y = 10;
-//     group.add(label);
-
-//     return group;
-//   });
-
 // Initialize graph instance globally
 const Graph = ForceGraph3D()(document.getElementById('3d-graph'))
   .linkDirectionalArrowLength(5)
@@ -117,7 +101,7 @@ document.getElementById('build-graph-btn').onclick = () => {
 
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(4),
-        new THREE.MeshBasicMaterial({ color: 'steelblue' })
+        new THREE.MeshBasicMaterial({ color: node.color })
       );
       group.add(sphere);
 
@@ -126,8 +110,47 @@ document.getElementById('build-graph-btn').onclick = () => {
       group.add(label);
 
       return group;
-    });
+    })
+    .nodeLabel(node => node.id)
+    .nodeAutoColorBy('id');
 };
 
 // Build graph initially
 document.getElementById('build-graph-btn').click();
+
+
+// Dragging functionality for the toggle button
+const dragElement = (element) => {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  element.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    element.style.top = (element.offsetTop - pos2) + "px";
+    element.style.left = (element.offsetLeft - pos1) + "px";
+    element.style.right = "auto";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+};
+
+// Activate dragging on the button
+dragElement(document.getElementById("toggle-btn"));

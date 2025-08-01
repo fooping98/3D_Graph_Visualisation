@@ -19,17 +19,32 @@
     }
      table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     th, td { border: 1px solid #ccc; padding: 6px; }
-    input { width: 90%; }
     button { width: 100%; padding: 8px; margin-bottom: 10px; cursor: pointer; }
-    textarea, input {
+    input {
       width: 100%;
       margin-bottom: 5px;
     }
     #3d-graph { width: 100vw; height: 100vh; }
+    #toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    padding: 2px 6px;
+    font-size: 14px;
+    width: auto;
+    height: auto;
+    cursor: move;
+    user-select: none;
+  }
   </style>
   <!-- Load the 3d-force-graph library via CDN -->
-<script src="https://unpkg.com/three@0.150.1/build/three.min.js"></script>
-  <script src="https://unpkg.com/3d-force-graph"></script>
+<!-- <script src="https://unpkg.com/three@0.150.1/build/three.min.js"></script> -->
+<!-- <script src="https://unpkg.com/3d-force-graph"></script> -->  
+<script src='threemin.js'></script>
+<script src='3d_force_graph.js'></script>
+
+
 </head>
 <body>
    <div id="controls">
@@ -47,18 +62,27 @@
         <td><input type="text" value="A" /></td>
         <td><input type="text" value="C" /></td>
       </tr>
+      <tr>
+        <td><input type="text" value="D" /></td>
+        <td><input type="text" value="E" /></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="A" /></td>
+        <td><input type="text" value="E" /></td>
+      </tr>
     </tbody>
   </table>
   <button id="add-row-btn">Add Row</button>
   <button id="delete-row-btn">Delete last Row</button>
   <button id="build-graph-btn">Build Graph</button>
+  
 </div>
-
+<button id="toggle-btn">Collapse Table</button>
 
   <div id="3d-graph"></div>
 
-  <!-- Link to external JavaScript -->
-  <script src="graph.js"></script>
+<script src="graph.js"></script>
+
 </body>
 
 
